@@ -6,13 +6,19 @@ const initialFormValues = { title: '', text: '', topic: '' }
 export default function ArticleForm(props) {
   const [values, setValues] = useState(initialFormValues)
   // ✨ where are my props? Destructure them here
+  const { postArticle, currentArticle, updateArticle, setCurrentArticleId } = props
 
   useEffect(() => {
     // ✨ implement
     // Every time the `currentArticle` prop changes, we should check it for truthiness:
     // if it's truthy, we should set its title, text and topic into the corresponding
     // values of the form. If it's not, we should reset the form back to initial values.
-  })
+    if (currentArticle) {
+      setValues(currentArticle) 
+    } else {
+      setValues(initialFormValues)
+    }
+  }, [currentArticle])
 
   const onChange = evt => {
     const { id, value } = evt.target
@@ -22,13 +28,33 @@ export default function ArticleForm(props) {
   const onSubmit = evt => {
     evt.preventDefault()
     // ✨ implement
+    if(currentArticle){
+      updateArticle(values)
+    } else{
+      postArticle(values)
+    }
+    setValues(initialFormValues)
     // We must submit a new post or update an existing one,
     // depending on the truthyness of the `currentArticle` prop.
   }
 
-  const isDisabled = () => {
+  const isDisabled = (disabled) => {
     // ✨ implement
     // Make sure the inputs have some values
+    if (values.title.trim().length < 1) {
+      return disabled === true
+    }
+    if (values.text.trim().length < 1) {
+      return disabled === true
+    }
+    if (values.topic.trim().length < 1) {
+      return disabled === true
+    }
+
+  }
+
+  const cancelEdit = () => {
+    setCurrentArticleId(null)
   }
 
   return (
@@ -57,8 +83,8 @@ export default function ArticleForm(props) {
         <option value="Node">Node</option>
       </select>
       <div className="button-group">
-        <button disabled={isDisabled()} id="submitArticle">Submit</button>
-        <button onClick={Function.prototype}>Cancel edit</button>
+        <button disabled={isDisabled(true)} id="submitArticle">Submit</button>
+        {currentArticle &&<button onClick={()=>cancelEdit()}>Cancel edit</button>}
       </div>
     </form>
   )
