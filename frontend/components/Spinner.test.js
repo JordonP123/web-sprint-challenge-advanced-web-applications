@@ -48,6 +48,12 @@ test(' Spinner renders with boolean prop "spinnerOn" ', () => {
   render (<Spinner on={true} />)
 })
 
+test('spinner does not render when boolean is false', async () => {
+  render(<Spinner on={false}/>)
+  await loginFlow()
+  expect(screen.queryByText(/Please wait.../)).not.toBeInTheDocument()
+})
+
 test('On submit of login process, spinner displays', async () => {
   render(<Spinner on={true} />)
   await loginFlow()
